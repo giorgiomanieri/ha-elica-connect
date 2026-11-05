@@ -4,8 +4,6 @@ Integrazione personalizzata per comandare le cappe Elica Connect da Home Assista
 
 > **Progetto non ufficiale.** Non è affiliato, approvato o supportato da Elica S.p.A. "Elica" è un marchio dei rispettivi titolari ed è usato solo per indicare i prodotti compatibili. Usi questa integrazione a tuo rischio: può smettere di funzionare se il cloud cambia, e il suo uso potrebbe non essere conforme alle condizioni del servizio Elica, con il rischio di blocco dell'account.
 
-Provata solo su una Boxin Advance Plus (`dataModelIdx` 9). Su altri modelli può funzionare in parte o non funzionare.
-
 ## Cosa aggiunge
 
 | Entità | Funzione |
@@ -18,6 +16,32 @@ Provata solo su una Boxin Advance Plus (`dataModelIdx` 9). Su altri modelli può
 Lo stato si aggiorna ogni 30 secondi, quindi un comando dato dal pannello fisico o da Alexa può comparire in HA con un po' di ritardo.
 
 Il boost non è supportato: la cappa in boost appare al 100%, e da HA si può solo passare a una velocità manuale.
+
+## Compatibilità
+
+Finora l'integrazione è stata provata su una sola cappa:
+
+| Modello | Codice | Modello dati | Installazione |
+|---|---|---|---|
+| Boxin Advance Plus IX/A/60 | `PRF0191539` | `dataModelIdx` 9 | Aspirante |
+
+### Provato su questa cappa
+
+- Accesso, rinnovo del token dopo un riavvio di Home Assistant e lettura dello stato.
+- Ventola a velocità 1 e spegnimento.
+- Accensione, spegnimento e intensità della luce.
+- Sensori e reset del filtro grassi.
+
+### Non ancora verificato
+
+- Ventola a velocità 2 e 3, e comportamento in boost.
+- Filtro carbone e installazione filtrante.
+- Durata del token di rinnovo nel tempo.
+- Installazione tramite HACS.
+- Altri modelli di cappa e altri modelli dati. Le entità vengono create in base agli attributi che il cloud riporta, ma il comportamento può essere diverso.
+- Purificatori Snap: non sono supportati.
+
+Se la provi su un altro modello, apri una [issue](https://github.com/giorgiomanieri/ha-elica-connect/issues) indicando modello, `dataModelIdx` e cosa funziona. Non includere credenziali, seriali o identificativi del dispositivo.
 
 ## Requisiti
 
