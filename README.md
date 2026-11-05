@@ -1,87 +1,83 @@
-# Elica Connect per Home Assistant
+# Elica Connect for Home Assistant
 
-Integrazione personalizzata per comandare le cappe Elica Connect da Home Assistant, tramite il cloud Elica.
+[Italiano](README.it.md)
 
-> **Progetto non ufficiale.** Non è affiliato, approvato o supportato da Elica S.p.A. "Elica" è un marchio dei rispettivi titolari ed è usato solo per indicare i prodotti compatibili. Usi questa integrazione a tuo rischio: può smettere di funzionare se il cloud cambia, e il suo uso potrebbe non essere conforme alle condizioni del servizio Elica, con il rischio di blocco dell'account.
+Custom integration to control Elica Connect hoods from Home Assistant, through the Elica cloud.
 
-## Cosa aggiunge
+> **Unofficial project.** It is not affiliated with, endorsed by or supported by Elica S.p.A. "Elica" is a trademark of its respective owners and is used only to identify compatible products. Use this integration at your own risk: it may stop working if the cloud changes, and using it may not comply with the Elica service terms, which could lead to your account being blocked.
 
-| Entità | Funzione |
+## Active features
+
+Every feature in this table has been tested on a real hood.
+
+| Entity | Function |
 |---|---|
-| Ventola | Spenta e velocità 1, 2 e 3 (33, 67 e 100%) |
-| Luce | Accensione e intensità |
-| Filtri | Efficienza e stato, come sensori diagnostici |
-| Azzera filtro | Pulsante per segnare il filtro come pulito, solo se il cloud lo consente |
+| Fan | Off, speeds 1, 2 and 3, boost (25, 50, 75 and 100%) |
+| Light | On, off and intensity |
+| Grease filter | Efficiency and status, as diagnostic sensors |
+| Reset grease filter | Button to mark the filter as clean |
 
-Lo stato si aggiorna ogni 30 secondi, quindi un comando dato dal pannello fisico o da Alexa può comparire in HA con un po' di ritardo.
+The state refreshes every 30 seconds, so a command given from the hood panel or through Alexa may appear in Home Assistant with a short delay.
 
-Il boost non è supportato: la cappa in boost appare al 100%, e da HA si può solo passare a una velocità manuale.
+## Compatibility
 
-## Compatibilità
+So far the integration has been tested on a single hood:
 
-Finora l'integrazione è stata provata su una sola cappa:
-
-| Modello | Codice | Modello dati | Installazione |
+| Model | Code | Data model | Installation |
 |---|---|---|---|
-| Boxin Advance Plus IX/A/60 | `PRF0191539` | `dataModelIdx` 9 | Aspirante |
+| Boxin Advance Plus IX/A/60 | `PRF0191539` | `dataModelIdx` 9 | Extractor |
 
-### Provato su questa cappa
+Login, token refresh after a Home Assistant restart and state reading have also been tested.
 
-- Accesso, rinnovo del token dopo un riavvio di Home Assistant e lettura dello stato.
-- Ventola a velocità 1 e spegnimento.
-- Accensione, spegnimento e intensità della luce.
-- Sensori e reset del filtro grassi.
+### Not verified yet
 
-### Non ancora verificato
+- Charcoal filter and recirculating installation: the code handles them, but they have not been tested.
+- Refresh token lifetime.
+- Installation through HACS.
+- Other hood models and data models. Entities are created from the attributes reported by the cloud, but behavior may differ. In particular, boost uses the values observed on data model 9.
+- Snap air purifiers are not supported.
 
-- Ventola a velocità 2 e 3, e comportamento in boost.
-- Filtro carbone e installazione filtrante.
-- Durata del token di rinnovo nel tempo.
-- Installazione tramite HACS.
-- Altri modelli di cappa e altri modelli dati. Le entità vengono create in base agli attributi che il cloud riporta, ma il comportamento può essere diverso.
-- Purificatori Snap: non sono supportati.
+If you try it on another model, open an [issue](https://github.com/giorgiomanieri/ha-elica-connect/issues) with the model, its `dataModelIdx` and what works. Do not include credentials, serial numbers or device identifiers.
 
-Se la provi su un altro modello, apri una [issue](https://github.com/giorgiomanieri/ha-elica-connect/issues) indicando modello, `dataModelIdx` e cosa funziona. Non includere credenziali, seriali o identificativi del dispositivo.
+## Requirements
 
-## Requisiti
+- Home Assistant 2026.3 or later.
+- An Elica Connect account with the hood already paired in the app.
+- Your own copy of the Elica Connect app as an APK, used to get the client credential. This repository does not include it.
 
-- Home Assistant 2026.3 o successivo.
-- Un account Elica Connect con la cappa già abbinata nell'app.
-- La tua copia dell'app Elica Connect in formato APK, da cui ricavare la credenziale client. Questo repository non la contiene.
+## Installation
 
-## Installazione
+With HACS: add this repository as a custom repository of type **Integration**, install **Elica Connect** and restart Home Assistant.
 
-Con HACS: aggiungi questo repository come repository personalizzato di tipo **Integration**, installa **Elica Connect** e riavvia Home Assistant.
+Manually: copy `custom_components/elica_connect` to `/config/custom_components/` and restart Home Assistant.
 
-A mano: copia `custom_components/elica_connect` in `/config/custom_components/` e riavvia Home Assistant.
+## Configuration
 
-## Configurazione
-
-1. Copia negli appunti la credenziale client dalla tua copia dell'APK. Il comando funziona su Windows e non la mostra a schermo:
+1. Copy the client credential from your copy of the APK to the clipboard. The command works on Windows and does not display the credential:
 
    ```bash
-   python elica_probe.py --apk PERCORSO_APK --copy-client-credential
+   python elica_probe.py --apk PATH_TO_APK --copy-client-credential
    ```
 
-2. In Home Assistant apri **Impostazioni > Dispositivi e servizi > Aggiungi integrazione** e cerca **Elica Connect**.
-3. Inserisci email e password Elica, poi incolla la credenziale client.
+2. In Home Assistant open **Settings > Devices & services > Add integration** and search for **Elica Connect**.
+3. Enter your Elica email and password, then paste the client credential.
 
-La password serve solo per il primo accesso e non viene salvata. HA conserva in `.storage` il token di rinnovo e la credenziale client, quindi tratta quella cartella e i backup come dati sensibili. Se il token scade, HA ti chiederà di nuovo la password.
+The password is used only for the first login and is not stored. Home Assistant keeps the refresh token and the client credential in `.storage`, so treat that folder and your backups as sensitive data. If the token expires, Home Assistant asks for the password again.
 
 ## Privacy
 
-L'integrazione e `elica_probe.py` comunicano solo con il cloud Elica (`cloudprod.elica.com`), come fa l'app ufficiale. Le credenziali e i comandi vanno a Elica, e da Elica arrivano stato della cappa e dati dei filtri.
+The integration and `elica_probe.py` communicate only with the Elica cloud (`cloudprod.elica.com`), as the official app does. Credentials and commands go to Elica, and hood state and filter data come from Elica.
 
-Questo progetto non include telemetria e non invia dati all'autore o ad altri servizi. Il trattamento dei dati da parte di Elica è regolato dalla sua informativa privacy.
+This project includes no telemetry and sends no data to its author or to other services. Elica's handling of your data is governed by its privacy policy.
 
-## Strumenti
+## Tools
 
-`elica_probe.py` è un client da riga di comando per leggere lo stato e provare luce e ventola. Usa solo la libreria standard di Python:
+`elica_probe.py` is a command line client to read the state and try the light and fan. It uses only the Python standard library:
 
 ```bash
-python elica_probe.py --apk PERCORSO_APK --raw
+python elica_probe.py --apk PATH_TO_APK --raw
 ```
 
-## Licenza
+## License
 
-[MIT](LICENSE). La licenza riguarda solo il codice di questo repository.
+[MIT](LICENSE). The license covers only the code in this repository.

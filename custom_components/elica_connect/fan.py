@@ -8,10 +8,16 @@ from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import ATTR_FAN_MODE, ATTR_FAN_SPEED, FAN_MODE_BOOST_BIT, FAN_MODE_MANUAL
+from .const import ATTR_FAN_SPEED
 from .coordinator import ElicaConfigEntry, ElicaCoordinator
 from .entity import ElicaEntity
-from .values import MAX_FAN_SPEED, percentage_to_speed, speed_to_percentage
+from .values import (
+    BOOST_SPEED,
+    current_speed,
+    fan_capabilities,
+    percentage_to_speed,
+    speed_to_percentage,
+)
 
 
 async def async_setup_entry(
@@ -29,10 +35,10 @@ async def async_setup_entry(
 
 
 class ElicaFan(ElicaEntity, FanEntity):
-    """The hood's fan, driven through its manual speeds."""
+    """The hood's fan: off, three manual speeds and the boost."""
 
     _attr_name = None
-    _attr_speed_count = MAX_FAN_SPEED
+    _attr_speed_count = BOOST_SPEED
     _attr_supported_features = (
         FanEntityFeature.SET_SPEED
         | FanEntityFeature.TURN_ON
@@ -47,19 +53,16 @@ class ElicaFan(ElicaEntity, FanEntity):
     @property
     def percentage(self) -> int | None:
         """Return the fan speed as a percentage."""
-        if (self.data_model.get(ATTR_FAN_MODE) or 0) & FAN_MODE_BOOST_BIT:
-            return 100
-        speed = self.data_model.get(ATTR_FAN_SPEED)
+        speed = current_speed(self.data_model)
         return None if speed is None else speed_to_percentage(speed)
 
     async def async_set_percentage(self, percentage: int) -> None:
         """Set the fan speed."""
         await self.coordinator.async_send_command(
             self._device_id,
-            {
-                ATTR_FAN_MODE: FAN_MODE_MANUAL,
-                ATTR_FAN_SPEED: percentage_to_speed(percentage),
-            },
+            fan_capabilities(
+                percentage_to_speed(percentage), self.device.get("dataModelIdx")
+            ),
         )
 
     async def async_turn_on(
