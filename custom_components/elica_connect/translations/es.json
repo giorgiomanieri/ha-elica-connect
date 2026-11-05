@@ -18,9 +18,10 @@
       },
       "reauth_confirm": {
         "title": "Inicia sesión de nuevo",
-        "description": "El inicio de sesión de Elica para {email} ha caducado. Vuelve a introducir la contraseña.",
+        "description": "El inicio de sesión de Elica para {email} ha caducado. Vuelve a introducir la contraseña. Si sigue fallando, sube también una copia más reciente de la app.",
         "data": {
-          "password": "Contraseña"
+          "password": "Contraseña",
+          "apk": "Archivo más reciente de la app (APK, opcional)"
         }
       }
     },

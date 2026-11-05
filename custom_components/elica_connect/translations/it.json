@@ -18,9 +18,10 @@
       },
       "reauth_confirm": {
         "title": "Accedi di nuovo",
-        "description": "L'accesso Elica per {email} è scaduto. Inserisci di nuovo la password.",
+        "description": "L'accesso Elica per {email} è scaduto. Inserisci di nuovo la password. Se l'accesso continua a non riuscire, carica anche una copia più recente dell'app.",
         "data": {
-          "password": "Password"
+          "password": "Password",
+          "apk": "File dell'app più recente (APK, facoltativo)"
         }
       }
     },

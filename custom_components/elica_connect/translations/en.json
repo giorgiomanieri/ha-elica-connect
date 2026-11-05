@@ -18,9 +18,10 @@
       },
       "reauth_confirm": {
         "title": "Sign in again",
-        "description": "The Elica login for {email} has expired. Enter the password again.",
+        "description": "The Elica login for {email} has expired. Enter the password again. If sign-in keeps failing, also upload a newer copy of the app.",
         "data": {
-          "password": "Password"
+          "password": "Password",
+          "apk": "Newer app file (APK, optional)"
         }
       }
     },

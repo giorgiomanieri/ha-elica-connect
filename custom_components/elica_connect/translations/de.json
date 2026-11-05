@@ -18,9 +18,10 @@
       },
       "reauth_confirm": {
         "title": "Erneut anmelden",
-        "description": "Die Elica-Anmeldung für {email} ist abgelaufen. Gib das Passwort erneut ein.",
+        "description": "Die Elica-Anmeldung für {email} ist abgelaufen. Gib das Passwort erneut ein. Wenn die Anmeldung weiter fehlschlägt, lade auch eine neuere Kopie der App hoch.",
         "data": {
-          "password": "Passwort"
+          "password": "Passwort",
+          "apk": "Neuere App-Datei (APK, optional)"
         }
       }
     },

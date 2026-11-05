@@ -45,7 +45,12 @@ CREDENTIALS_SCHEMA = vol.Schema(
         vol.Required(CONF_PASSWORD): PASSWORD_SELECTOR,
     }
 )
-REAUTH_SCHEMA = vol.Schema({vol.Required(CONF_PASSWORD): PASSWORD_SELECTOR})
+REAUTH_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_PASSWORD): PASSWORD_SELECTOR,
+        vol.Optional(CONF_APK): FileSelector(FileSelectorConfig(accept=".apk")),
+    }
+)
 
 
 def _read_uploaded_apk(hass: HomeAssistant, file_id: str) -> str:
@@ -62,6 +67,18 @@ class ElicaConfigFlow(ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         """Initialize the flow."""
         self._credential: str | None = None
+
+    async def _async_read_optional_apk(self, file_id: str | None) -> str | None:
+        """Keep the credential of an uploaded APK; return an error key if invalid."""
+        if file_id is None:
+            return None
+        try:
+            self._credential = await self.hass.async_add_executor_job(
+                _read_uploaded_apk, self.hass, file_id
+            )
+        except (InvalidApk, ValueError):
+            return "invalid_apk"
+        return None
 
     async def _async_try_login(
         self, email: str, password: str, credential: str, app_uuid: str
@@ -85,14 +102,10 @@ class ElicaConfigFlow(ConfigFlow, domain=DOMAIN):
         """Ask for the APK, which provides the app's client credential."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            try:
-                self._credential = await self.hass.async_add_executor_job(
-                    _read_uploaded_apk, self.hass, user_input[CONF_APK]
-                )
-            except (InvalidApk, ValueError):
-                errors["base"] = "invalid_apk"
-            else:
+            error = await self._async_read_optional_apk(user_input[CONF_APK])
+            if error is None:
                 return await self.async_step_credentials()
+            errors["base"] = error
 
         return self.async_show_form(
             step_id="user", data_schema=APK_SCHEMA, errors=errors
@@ -137,19 +150,26 @@ class ElicaConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_reauth_confirm(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Ask for the password again."""
+        """Ask for the password again and, if the app changed, a newer APK."""
         entry = self._get_reauth_entry()
         errors: dict[str, str] = {}
         if user_input is not None:
-            token, error = await self._async_try_login(
-                entry.data[CONF_EMAIL],
-                user_input[CONF_PASSWORD],
-                entry.data[CONF_CLIENT_CREDENTIAL],
-                entry.data[CONF_APP_UUID],
-            )
+            error = await self._async_read_optional_apk(user_input.get(CONF_APK))
+            if error is None:
+                credential = self._credential or entry.data[CONF_CLIENT_CREDENTIAL]
+                token, error = await self._async_try_login(
+                    entry.data[CONF_EMAIL],
+                    user_input[CONF_PASSWORD],
+                    credential,
+                    entry.data[CONF_APP_UUID],
+                )
             if error is None:
                 return self.async_update_reload_and_abort(
-                    entry, data_updates={CONF_REFRESH_TOKEN: token}
+                    entry,
+                    data_updates={
+                        CONF_CLIENT_CREDENTIAL: credential,
+                        CONF_REFRESH_TOKEN: token,
+                    },
                 )
             errors["base"] = error
 

@@ -18,9 +18,10 @@
       },
       "reauth_confirm": {
         "title": "Reconnectez-vous",
-        "description": "La connexion Elica pour {email} a expiré. Saisissez à nouveau le mot de passe.",
+        "description": "La connexion Elica pour {email} a expiré. Saisissez à nouveau le mot de passe. Si la connexion échoue encore, importez aussi une copie plus récente de l'application.",
         "data": {
-          "password": "Mot de passe"
+          "password": "Mot de passe",
+          "apk": "Fichier plus récent de l'application (APK, facultatif)"
         }
       }
     },
