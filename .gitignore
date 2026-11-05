@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.apk
+*.zip
+.elica_app_uuid
+PROTOCOL.md

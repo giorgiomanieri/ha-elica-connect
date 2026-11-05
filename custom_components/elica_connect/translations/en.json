@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elica Connect",
+        "description": "Sign in with your Elica Connect account. The client credential comes from your copy of the app: see the README.",
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "client_credential": "Client credential"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "The Elica login for {email} has expired. Enter the password again.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the Elica cloud.",
+      "invalid_auth": "Email, password or client credential not accepted.",
+      "no_hoods": "This account has no hoods."
+    },
+    "abort": {
+      "already_configured": "This account is already configured.",
+      "reauth_successful": "Sign-in updated."
+    }
+  },
+  "entity": {
+    "button": {
+      "grease_filter_reset": { "name": "Reset grease filter" },
+      "charcoal_filter_reset": { "name": "Reset charcoal filter" }
+    },
+    "light": {
+      "cooktop_light": { "name": "Light" }
+    },
+    "sensor": {
+      "grease_filter_efficiency": { "name": "Grease filter efficiency" },
+      "grease_filter_status": { "name": "Grease filter status" },
+      "charcoal_filter_efficiency": { "name": "Charcoal filter efficiency" },
+      "charcoal_filter_status": { "name": "Charcoal filter status" }
+    }
+  }
+}

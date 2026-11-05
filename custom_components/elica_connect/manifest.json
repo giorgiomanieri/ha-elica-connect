@@ -1,0 +1,13 @@
+{
+  "domain": "elica_connect",
+  "name": "Elica Connect",
+  "codeowners": ["@giorgiomanieri"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/giorgiomanieri/ha-elica-connect",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/giorgiomanieri/ha-elica-connect/issues",
+  "requirements": [],
+  "version": "0.2.0"
+}

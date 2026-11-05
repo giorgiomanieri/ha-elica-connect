@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elica Connect",
+        "description": "Accedi con il tuo account Elica Connect. La credenziale client si ricava dalla tua copia dell'app: vedi il README.",
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "client_credential": "Credenziale client"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Accedi di nuovo",
+        "description": "L'accesso Elica per {email} è scaduto. Inserisci di nuovo la password.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile raggiungere il cloud Elica.",
+      "invalid_auth": "Email, password o credenziale client non accettate.",
+      "no_hoods": "Questo account non ha cappe."
+    },
+    "abort": {
+      "already_configured": "Questo account è già configurato.",
+      "reauth_successful": "Accesso aggiornato."
+    }
+  },
+  "entity": {
+    "button": {
+      "grease_filter_reset": { "name": "Azzera filtro grassi" },
+      "charcoal_filter_reset": { "name": "Azzera filtro carbone" }
+    },
+    "light": {
+      "cooktop_light": { "name": "Luce" }
+    },
+    "sensor": {
+      "grease_filter_efficiency": { "name": "Efficienza filtro grassi" },
+      "grease_filter_status": { "name": "Stato filtro grassi" },
+      "charcoal_filter_efficiency": { "name": "Efficienza filtro carbone" },
+      "charcoal_filter_status": { "name": "Stato filtro carbone" }
+    }
+  }
+}
