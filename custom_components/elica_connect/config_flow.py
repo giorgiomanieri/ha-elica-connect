@@ -8,16 +8,21 @@ from uuid import uuid4
 
 import voluptuous as vol
 
+from homeassistant.components.file_upload import process_uploaded_file
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
+    FileSelector,
+    FileSelectorConfig,
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
 )
 
 from .api import ElicaAuthError, ElicaClient, ElicaError
+from .apk import InvalidApk, read_client_credential
 from .const import (
     CONF_APP_UUID,
     CONF_CLIENT_CREDENTIAL,
@@ -26,29 +31,37 @@ from .const import (
     DOMAIN,
 )
 
+CONF_APK = "apk"
+
 PASSWORD_SELECTOR = TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD))
-USER_SCHEMA = vol.Schema(
+APK_SCHEMA = vol.Schema(
+    {vol.Required(CONF_APK): FileSelector(FileSelectorConfig(accept=".apk"))}
+)
+CREDENTIALS_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_EMAIL): TextSelector(
             TextSelectorConfig(type=TextSelectorType.EMAIL)
         ),
         vol.Required(CONF_PASSWORD): PASSWORD_SELECTOR,
-        vol.Required(CONF_CLIENT_CREDENTIAL): PASSWORD_SELECTOR,
     }
 )
 REAUTH_SCHEMA = vol.Schema({vol.Required(CONF_PASSWORD): PASSWORD_SELECTOR})
 
 
-def normalize_credential(value: str) -> str:
-    """Accept the client credential with or without its 'Basic' prefix."""
-    value = value.strip()
-    return value if value.startswith("Basic ") else f"Basic {value}"
+def _read_uploaded_apk(hass: HomeAssistant, file_id: str) -> str:
+    """Read the credential; Home Assistant deletes the upload afterwards."""
+    with process_uploaded_file(hass, file_id) as path:
+        return read_client_credential(path)
 
 
 class ElicaConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle the setup of an Elica account."""
 
     VERSION = 1
+
+    def __init__(self) -> None:
+        """Initialize the flow."""
+        self._credential: str | None = None
 
     async def _async_try_login(
         self, email: str, password: str, credential: str, app_uuid: str
@@ -69,6 +82,25 @@ class ElicaConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
+        """Ask for the APK, which provides the app's client credential."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            try:
+                self._credential = await self.hass.async_add_executor_job(
+                    _read_uploaded_apk, self.hass, user_input[CONF_APK]
+                )
+            except (InvalidApk, ValueError):
+                errors["base"] = "invalid_apk"
+            else:
+                return await self.async_step_credentials()
+
+        return self.async_show_form(
+            step_id="user", data_schema=APK_SCHEMA, errors=errors
+        )
+
+    async def async_step_credentials(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Ask for the account credentials."""
         errors: dict[str, str] = {}
         if user_input is not None:
@@ -76,17 +108,16 @@ class ElicaConfigFlow(ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(email.lower())
             self._abort_if_unique_id_configured()
 
-            credential = normalize_credential(user_input[CONF_CLIENT_CREDENTIAL])
             app_uuid = str(uuid4())
             token, error = await self._async_try_login(
-                email, user_input[CONF_PASSWORD], credential, app_uuid
+                email, user_input[CONF_PASSWORD], self._credential, app_uuid
             )
             if error is None:
                 return self.async_create_entry(
                     title=email,
                     data={
                         CONF_EMAIL: email,
-                        CONF_CLIENT_CREDENTIAL: credential,
+                        CONF_CLIENT_CREDENTIAL: self._credential,
                         CONF_APP_UUID: app_uuid,
                         CONF_REFRESH_TOKEN: token,
                     },
@@ -94,7 +125,7 @@ class ElicaConfigFlow(ConfigFlow, domain=DOMAIN):
             errors["base"] = error
 
         return self.async_show_form(
-            step_id="user", data_schema=USER_SCHEMA, errors=errors
+            step_id="credentials", data_schema=CREDENTIALS_SCHEMA, errors=errors
         )
 
     async def async_step_reauth(

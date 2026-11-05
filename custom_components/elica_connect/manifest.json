@@ -3,11 +3,11 @@
   "name": "Elica Connect",
   "codeowners": ["@giorgiomanieri"],
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": ["file_upload"],
   "documentation": "https://github.com/giorgiomanieri/ha-elica-connect",
   "integration_type": "hub",
-  "iot_class": "cloud_polling",
+  "iot_class": "cloud_push",
   "issue_tracker": "https://github.com/giorgiomanieri/ha-elica-connect/issues",
-  "requirements": [],
-  "version": "0.3.1"
+  "requirements": ["paho-mqtt>=2.1.0"],
+  "version": "0.5.0"
 }

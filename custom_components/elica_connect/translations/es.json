@@ -3,11 +3,17 @@
     "step": {
       "user": {
         "title": "Elica Connect",
-        "description": "Inicia sesión con tu cuenta de Elica Connect. La credencial de cliente se obtiene de tu copia de la app: consulta el README.",
+        "description": "Sube tu copia de la app Elica Connect (archivo APK). Solo se lee para obtener la credencial de la app y no se conserva.",
+        "data": {
+          "apk": "Archivo de la app (APK)"
+        }
+      },
+      "credentials": {
+        "title": "Iniciar sesión",
+        "description": "Inicia sesión con tu cuenta de Elica Connect.",
         "data": {
           "email": "Correo electrónico",
-          "password": "Contraseña",
-          "client_credential": "Credencial de cliente"
+          "password": "Contraseña"
         }
       },
       "reauth_confirm": {
@@ -20,8 +26,9 @@
     },
     "error": {
       "cannot_connect": "No se ha podido conectar con la nube de Elica.",
-      "invalid_auth": "Correo electrónico, contraseña o credencial de cliente no aceptados.",
-      "no_hoods": "Esta cuenta no tiene campanas."
+      "invalid_auth": "Correo electrónico o contraseña no aceptados.",
+      "no_hoods": "Esta cuenta no tiene campanas.",
+      "invalid_apk": "Este archivo no parece la app Elica Connect."
     },
     "abort": {
       "already_configured": "Esta cuenta ya está configurada.",
@@ -30,17 +37,31 @@
   },
   "entity": {
     "button": {
-      "grease_filter_reset": { "name": "Restablecer filtro de grasa" },
-      "charcoal_filter_reset": { "name": "Restablecer filtro de carbón" }
+      "grease_filter_reset": {
+        "name": "Restablecer filtro de grasa"
+      },
+      "charcoal_filter_reset": {
+        "name": "Restablecer filtro de carbón"
+      }
     },
     "light": {
-      "cooktop_light": { "name": "Luz" }
+      "cooktop_light": {
+        "name": "Luz"
+      }
     },
     "sensor": {
-      "grease_filter_efficiency": { "name": "Eficiencia del filtro de grasa" },
-      "grease_filter_status": { "name": "Estado del filtro de grasa" },
-      "charcoal_filter_efficiency": { "name": "Eficiencia del filtro de carbón" },
-      "charcoal_filter_status": { "name": "Estado del filtro de carbón" }
+      "grease_filter_efficiency": {
+        "name": "Eficiencia del filtro de grasa"
+      },
+      "grease_filter_status": {
+        "name": "Estado del filtro de grasa"
+      },
+      "charcoal_filter_efficiency": {
+        "name": "Eficiencia del filtro de carbón"
+      },
+      "charcoal_filter_status": {
+        "name": "Estado del filtro de carbón"
+      }
     }
   }
 }

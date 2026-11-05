@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from base64 import urlsafe_b64decode
 import json
 from typing import Any
 
@@ -22,6 +23,24 @@ class ElicaAuthError(ElicaError):
     """The Elica cloud rejected the credentials or the refresh token."""
 
 
+def _read_mqtt_credentials(reply: dict[str, Any]) -> tuple[str, str] | None:
+    """Return the MQTT credentials of a token reply, or those inside its JWT."""
+    for source in (reply, _jwt_claims(reply["access_token"])):
+        username, password = source.get("mqtt_usr"), source.get("mqtt_psw")
+        if username and password:
+            return username, password
+    return None
+
+
+def _jwt_claims(token: str) -> dict[str, Any]:
+    try:
+        payload = token.split(".")[1]
+        claims = json.loads(urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+    except (IndexError, ValueError):
+        return {}
+    return claims if isinstance(claims, dict) else {}
+
+
 class ElicaClient:
     """Talk to the Elica cloud on behalf of one account."""
 
@@ -38,12 +57,18 @@ class ElicaClient:
         self._app_uuid = app_uuid
         self._refresh_token = refresh_token
         self._access_token: str | None = None
+        self._mqtt_credentials: tuple[str, str] | None = None
         self._refresh_lock = asyncio.Lock()
 
     @property
     def refresh_token(self) -> str | None:
         """Return the current refresh token, which the cloud may rotate."""
         return self._refresh_token
+
+    @property
+    def mqtt_credentials(self) -> tuple[str, str] | None:
+        """Return the MQTT username and password of the last token."""
+        return self._mqtt_credentials
 
     async def async_login(self, email: str, password: str) -> None:
         """Log in with the account credentials."""
@@ -114,6 +139,7 @@ class ElicaClient:
             raise ElicaError(f"Token request failed with status {status}")
         self._access_token = reply["access_token"]
         self._refresh_token = reply.get("refresh_token", self._refresh_token)
+        self._mqtt_credentials = _read_mqtt_credentials(reply) or self._mqtt_credentials
 
     async def _async_api_request(
         self, method: str, path: str, body: dict[str, Any] | None = None

@@ -3,11 +3,17 @@
     "step": {
       "user": {
         "title": "Elica Connect",
-        "description": "Connectez-vous avec votre compte Elica Connect. L'identifiant client provient de votre copie de l'application : consultez le README.",
+        "description": "Importez votre copie de l'application Elica Connect (fichier APK). Elle est lue uniquement pour obtenir l'identifiant de l'application et n'est pas conservée.",
+        "data": {
+          "apk": "Fichier de l'application (APK)"
+        }
+      },
+      "credentials": {
+        "title": "Connexion",
+        "description": "Connectez-vous avec votre compte Elica Connect.",
         "data": {
           "email": "E-mail",
-          "password": "Mot de passe",
-          "client_credential": "Identifiant client"
+          "password": "Mot de passe"
         }
       },
       "reauth_confirm": {
@@ -20,8 +26,9 @@
     },
     "error": {
       "cannot_connect": "Impossible de joindre le cloud Elica.",
-      "invalid_auth": "E-mail, mot de passe ou identifiant client non acceptés.",
-      "no_hoods": "Ce compte n'a aucune hotte."
+      "invalid_auth": "E-mail ou mot de passe non acceptés.",
+      "no_hoods": "Ce compte n'a aucune hotte.",
+      "invalid_apk": "Ce fichier ne semble pas être l'application Elica Connect."
     },
     "abort": {
       "already_configured": "Ce compte est déjà configuré.",
@@ -30,17 +37,31 @@
   },
   "entity": {
     "button": {
-      "grease_filter_reset": { "name": "Réinitialiser le filtre à graisse" },
-      "charcoal_filter_reset": { "name": "Réinitialiser le filtre à charbon" }
+      "grease_filter_reset": {
+        "name": "Réinitialiser le filtre à graisse"
+      },
+      "charcoal_filter_reset": {
+        "name": "Réinitialiser le filtre à charbon"
+      }
     },
     "light": {
-      "cooktop_light": { "name": "Lumière" }
+      "cooktop_light": {
+        "name": "Lumière"
+      }
     },
     "sensor": {
-      "grease_filter_efficiency": { "name": "Efficacité du filtre à graisse" },
-      "grease_filter_status": { "name": "État du filtre à graisse" },
-      "charcoal_filter_efficiency": { "name": "Efficacité du filtre à charbon" },
-      "charcoal_filter_status": { "name": "État du filtre à charbon" }
+      "grease_filter_efficiency": {
+        "name": "Efficacité du filtre à graisse"
+      },
+      "grease_filter_status": {
+        "name": "État du filtre à graisse"
+      },
+      "charcoal_filter_efficiency": {
+        "name": "Efficacité du filtre à charbon"
+      },
+      "charcoal_filter_status": {
+        "name": "État du filtre à charbon"
+      }
     }
   }
 }

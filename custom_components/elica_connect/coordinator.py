@@ -7,12 +7,20 @@ import logging
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, HomeAssistantError
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util.ssl import client_context
 
 from .api import ElicaAuthError, ElicaClient, ElicaError
-from .const import CONF_REFRESH_TOKEN, DEVICE_TYPE_HOOD, DOMAIN, UPDATE_INTERVAL
+from .const import (
+    CONF_REFRESH_TOKEN,
+    DEVICE_TYPE_HOOD,
+    DOMAIN,
+    PUSH_UPDATE_INTERVAL,
+    UPDATE_INTERVAL,
+)
+from .mqtt import ElicaMqttClient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,6 +44,7 @@ class ElicaCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
             update_interval=UPDATE_INTERVAL,
         )
         self.client = client
+        self._mqtt: ElicaMqttClient | None = None
 
     async def _async_update_data(self) -> dict[str, dict[str, Any]]:
         try:
@@ -47,16 +56,69 @@ class ElicaCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
         finally:
             self._async_store_refresh_token()
 
+        if self._mqtt is not None and self.client.mqtt_credentials is not None:
+            self._mqtt.update_credentials(self.client.mqtt_credentials)
+
         return {
             device["id"]: device
             for device in devices
             if device.get("type") == DEVICE_TYPE_HOOD
         }
 
+    async def async_start_mqtt(self) -> None:
+        """Start real-time updates; polling carries on if they are unavailable."""
+        credentials = self.client.mqtt_credentials
+        cuids = [device["cuid"] for device in self.data.values() if device.get("cuid")]
+        if credentials is None or not cuids:
+            _LOGGER.warning("Elica MQTT is unavailable, using polling only")
+            return
+        self._mqtt = ElicaMqttClient(
+            client_context(),
+            credentials,
+            cuids,
+            self._handle_mqtt_status,
+            self._handle_mqtt_connection,
+        )
+        await self.hass.async_add_executor_job(self._mqtt.start)
+
+    async def async_stop_mqtt(self) -> None:
+        """Stop real-time updates."""
+        if self._mqtt is not None:
+            await self.hass.async_add_executor_job(self._mqtt.stop)
+            self._mqtt = None
+
+    def _handle_mqtt_status(self, cuid: str, status: dict[str, Any]) -> None:
+        self.hass.loop.call_soon_threadsafe(self._async_apply_status, cuid, status)
+
+    def _handle_mqtt_connection(self, connected: bool) -> None:
+        self.hass.loop.call_soon_threadsafe(self._async_set_push_active, connected)
+
+    @callback
+    def _async_set_push_active(self, active: bool) -> None:
+        self.update_interval = PUSH_UPDATE_INTERVAL if active else UPDATE_INTERVAL
+
+    @callback
+    def _async_apply_status(self, cuid: str, status: dict[str, Any]) -> None:
+        """Merge a status message, which holds only what changed."""
+        for device_id, device in self.data.items():
+            if device.get("cuid") != cuid:
+                continue
+            updated = {
+                **device,
+                "dataModel": {
+                    **(device.get("dataModel") or {}),
+                    **(status.get("dataModel") or {}),
+                },
+            }
+            if "connected" in status:
+                updated["connected"] = status["connected"]
+            self.async_set_updated_data({**self.data, device_id: updated})
+            return
+
     async def async_send_command(
         self, device_id: str, capabilities: dict[str, int]
     ) -> None:
-        """Send a command and show its values until the next poll confirms them."""
+        """Send a command and show its values until an update confirms them."""
         device = self.data[device_id]
         await self._async_run(self.client.async_send_command(device, capabilities))
         updated_device = {

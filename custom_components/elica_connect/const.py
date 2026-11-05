@@ -4,6 +4,7 @@ from datetime import timedelta
 
 DOMAIN = "elica_connect"
 UPDATE_INTERVAL = timedelta(seconds=30)
+PUSH_UPDATE_INTERVAL = timedelta(minutes=5)
 
 CONF_APP_UUID = "app_uuid"
 CONF_CLIENT_CREDENTIAL = "client_credential"

@@ -3,11 +3,17 @@
     "step": {
       "user": {
         "title": "Elica Connect",
-        "description": "Sign in with your Elica Connect account. The client credential comes from your copy of the app: see the README.",
+        "description": "Upload your copy of the Elica Connect app (APK file). It is read only to get the app credential and is not kept.",
+        "data": {
+          "apk": "App file (APK)"
+        }
+      },
+      "credentials": {
+        "title": "Sign in",
+        "description": "Sign in with your Elica Connect account.",
         "data": {
           "email": "Email",
-          "password": "Password",
-          "client_credential": "Client credential"
+          "password": "Password"
         }
       },
       "reauth_confirm": {
@@ -20,8 +26,9 @@
     },
     "error": {
       "cannot_connect": "Could not reach the Elica cloud.",
-      "invalid_auth": "Email, password or client credential not accepted.",
-      "no_hoods": "This account has no hoods."
+      "invalid_auth": "Email or password not accepted.",
+      "no_hoods": "This account has no hoods.",
+      "invalid_apk": "This file does not look like the Elica Connect app."
     },
     "abort": {
       "already_configured": "This account is already configured.",
@@ -30,17 +37,31 @@
   },
   "entity": {
     "button": {
-      "grease_filter_reset": { "name": "Reset grease filter" },
-      "charcoal_filter_reset": { "name": "Reset charcoal filter" }
+      "grease_filter_reset": {
+        "name": "Reset grease filter"
+      },
+      "charcoal_filter_reset": {
+        "name": "Reset charcoal filter"
+      }
     },
     "light": {
-      "cooktop_light": { "name": "Light" }
+      "cooktop_light": {
+        "name": "Light"
+      }
     },
     "sensor": {
-      "grease_filter_efficiency": { "name": "Grease filter efficiency" },
-      "grease_filter_status": { "name": "Grease filter status" },
-      "charcoal_filter_efficiency": { "name": "Charcoal filter efficiency" },
-      "charcoal_filter_status": { "name": "Charcoal filter status" }
+      "grease_filter_efficiency": {
+        "name": "Grease filter efficiency"
+      },
+      "grease_filter_status": {
+        "name": "Grease filter status"
+      },
+      "charcoal_filter_efficiency": {
+        "name": "Charcoal filter efficiency"
+      },
+      "charcoal_filter_status": {
+        "name": "Charcoal filter status"
+      }
     }
   }
 }

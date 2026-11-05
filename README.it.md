@@ -17,7 +17,7 @@ Tutte le funzioni di questa tabella sono state provate su una cappa reale.
 | Filtro grassi | Efficienza e stato, come sensori diagnostici |
 | Azzera filtro grassi | Pulsante per segnare il filtro come pulito |
 
-Lo stato si aggiorna ogni 30 secondi, quindi un comando dato dal pannello fisico o da Alexa può comparire in HA con un po' di ritardo.
+Le modifiche arrivano in tempo reale tramite il broker MQTT di Elica, di solito entro 1-2 secondi, comprese quelle fatte dal pannello della cappa. Se MQTT non è disponibile, l'integrazione torna a interrogare il cloud ogni 30 secondi.
 
 L'interfaccia è disponibile in inglese, italiano, spagnolo, francese e tedesco, secondo la lingua di Home Assistant.
 
@@ -35,6 +35,7 @@ Sono stati provati anche l'accesso, il rinnovo del token dopo un riavvio di Home
 
 - Filtro carbone e installazione filtrante: il codice li prevede, ma non sono stati provati.
 - Durata del token di rinnovo nel tempo.
+- Configurazione con il caricamento dell'APK.
 - Installazione tramite HACS.
 - Altri modelli di cappa e altri modelli dati. Le entità vengono create in base agli attributi che il cloud riporta, ma il comportamento può essere diverso. In particolare, il boost usa i valori osservati sul modello dati 9.
 - Purificatori Snap: non sono supportati.
@@ -45,7 +46,7 @@ Se la provi su un altro modello, apri una [issue](https://github.com/giorgiomani
 
 - Home Assistant 2026.3 o successivo.
 - Un account Elica Connect con la cappa già abbinata nell'app.
-- La tua copia dell'app Elica Connect in formato APK, da cui ricavare la credenziale client. Questo repository non la contiene.
+- La tua copia dell'app Elica Connect come singolo file APK, preferibilmente presa dal tuo telefono. Questo repository non la contiene.
 
 ## Installazione
 
@@ -55,26 +56,21 @@ A mano: copia `custom_components/elica_connect` in `/config/custom_components/` 
 
 ## Configurazione
 
-1. Copia negli appunti la credenziale client dalla tua copia dell'APK. Il comando funziona su Windows e non la mostra a schermo:
+1. In Home Assistant apri **Impostazioni > Dispositivi e servizi > Aggiungi integrazione** e cerca **Elica Connect**.
+2. Carica la tua copia dell'APK. Home Assistant ne ricava la credenziale dell'app e poi elimina il file caricato.
+3. Inserisci email e password Elica.
 
-   ```bash
-   python elica_probe.py --apk PERCORSO_APK --copy-client-credential
-   ```
-
-2. In Home Assistant apri **Impostazioni > Dispositivi e servizi > Aggiungi integrazione** e cerca **Elica Connect**.
-3. Inserisci email e password Elica, poi incolla la credenziale client.
-
-La password serve solo per il primo accesso e non viene salvata. HA conserva in `.storage` il token di rinnovo e la credenziale client, quindi tratta quella cartella e i backup come dati sensibili. Se il token scade, HA ti chiederà di nuovo la password.
+La password serve solo per il primo accesso e non viene salvata. HA conserva in `.storage` il token di rinnovo e la credenziale dell'app, quindi tratta quella cartella e i backup come dati sensibili. Se il token scade, HA ti chiederà di nuovo la password.
 
 ## Privacy
 
-L'integrazione e `elica_probe.py` comunicano solo con il cloud Elica (`cloudprod.elica.com`), come fa l'app ufficiale. Le credenziali e i comandi vanno a Elica, e da Elica arrivano stato della cappa e dati dei filtri.
+L'integrazione e `elica_probe.py` comunicano solo con il cloud Elica (`cloudprod.elica.com`, e `cloudprodmqtt.elica.com` per gli aggiornamenti in tempo reale), come fa l'app ufficiale. Le credenziali e i comandi vanno a Elica, e da Elica arrivano stato della cappa e dati dei filtri.
 
 Questo progetto non include telemetria e non invia dati all'autore o ad altri servizi. Il trattamento dei dati da parte di Elica è regolato dalla sua informativa privacy.
 
 ## Strumenti
 
-`elica_probe.py` è un client da riga di comando per leggere lo stato e provare luce e ventola. Usa solo la libreria standard di Python:
+`elica_probe.py` è un client da riga di comando facoltativo per leggere lo stato e provare luce e ventola. Non serve per installare l'integrazione e usa solo la libreria standard di Python:
 
 ```bash
 python elica_probe.py --apk PERCORSO_APK --raw

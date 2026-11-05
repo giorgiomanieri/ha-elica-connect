@@ -17,7 +17,7 @@ Every feature in this table has been tested on a real hood.
 | Grease filter | Efficiency and status, as diagnostic sensors |
 | Reset grease filter | Button to mark the filter as clean |
 
-The state refreshes every 30 seconds, so a command given from the hood panel or through Alexa may appear in Home Assistant with a short delay.
+State changes arrive in real time through the Elica MQTT broker, usually within 1-2 seconds, including those made from the hood panel. If MQTT is unavailable, the integration falls back to polling the cloud every 30 seconds.
 
 The interface is available in English, Italian, Spanish, French and German, following the Home Assistant language.
 
@@ -35,6 +35,7 @@ Login, token refresh after a Home Assistant restart and state reading have also 
 
 - Charcoal filter and recirculating installation: the code handles them, but they have not been tested.
 - Refresh token lifetime.
+- Setup by uploading the APK.
 - Installation through HACS.
 - Other hood models and data models. Entities are created from the attributes reported by the cloud, but behavior may differ. In particular, boost uses the values observed on data model 9.
 - Snap air purifiers are not supported.
@@ -45,7 +46,7 @@ If you try it on another model, open an [issue](https://github.com/giorgiomanier
 
 - Home Assistant 2026.3 or later.
 - An Elica Connect account with the hood already paired in the app.
-- Your own copy of the Elica Connect app as an APK, used to get the client credential. This repository does not include it.
+- Your own copy of the Elica Connect app as a single APK file, preferably taken from your phone. This repository does not include it.
 
 ## Installation
 
@@ -55,26 +56,21 @@ Manually: copy `custom_components/elica_connect` to `/config/custom_components/`
 
 ## Configuration
 
-1. Copy the client credential from your copy of the APK to the clipboard. The command works on Windows and does not display the credential:
+1. In Home Assistant open **Settings > Devices & services > Add integration** and search for **Elica Connect**.
+2. Upload your copy of the APK. Home Assistant reads the app credential from it and then deletes the upload.
+3. Enter your Elica email and password.
 
-   ```bash
-   python elica_probe.py --apk PATH_TO_APK --copy-client-credential
-   ```
-
-2. In Home Assistant open **Settings > Devices & services > Add integration** and search for **Elica Connect**.
-3. Enter your Elica email and password, then paste the client credential.
-
-The password is used only for the first login and is not stored. Home Assistant keeps the refresh token and the client credential in `.storage`, so treat that folder and your backups as sensitive data. If the token expires, Home Assistant asks for the password again.
+The password is used only for the first login and is not stored. Home Assistant keeps the refresh token and the app credential in `.storage`, so treat that folder and your backups as sensitive data. If the token expires, Home Assistant asks for the password again.
 
 ## Privacy
 
-The integration and `elica_probe.py` communicate only with the Elica cloud (`cloudprod.elica.com`), as the official app does. Credentials and commands go to Elica, and hood state and filter data come from Elica.
+The integration and `elica_probe.py` communicate only with the Elica cloud (`cloudprod.elica.com`, and `cloudprodmqtt.elica.com` for real-time updates), as the official app does. Credentials and commands go to Elica, and hood state and filter data come from Elica.
 
 This project includes no telemetry and sends no data to its author or to other services. Elica's handling of your data is governed by its privacy policy.
 
 ## Tools
 
-`elica_probe.py` is a command line client to read the state and try the light and fan. It uses only the Python standard library:
+`elica_probe.py` is an optional command line client to read the state and try the light and fan. It is not needed to install the integration and uses only the Python standard library:
 
 ```bash
 python elica_probe.py --apk PATH_TO_APK --raw

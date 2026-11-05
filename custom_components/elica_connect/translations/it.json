@@ -3,11 +3,17 @@
     "step": {
       "user": {
         "title": "Elica Connect",
-        "description": "Accedi con il tuo account Elica Connect. La credenziale client si ricava dalla tua copia dell'app: vedi il README.",
+        "description": "Carica la tua copia dell'app Elica Connect (file APK). Viene letta solo per ricavare la credenziale dell'app e non viene conservata.",
+        "data": {
+          "apk": "File dell'app (APK)"
+        }
+      },
+      "credentials": {
+        "title": "Accedi",
+        "description": "Accedi con il tuo account Elica Connect.",
         "data": {
           "email": "Email",
-          "password": "Password",
-          "client_credential": "Credenziale client"
+          "password": "Password"
         }
       },
       "reauth_confirm": {
@@ -20,8 +26,9 @@
     },
     "error": {
       "cannot_connect": "Impossibile raggiungere il cloud Elica.",
-      "invalid_auth": "Email, password o credenziale client non accettate.",
-      "no_hoods": "Questo account non ha cappe."
+      "invalid_auth": "Email o password non accettate.",
+      "no_hoods": "Questo account non ha cappe.",
+      "invalid_apk": "Questo file non sembra l'app Elica Connect."
     },
     "abort": {
       "already_configured": "Questo account è già configurato.",
@@ -30,17 +37,31 @@
   },
   "entity": {
     "button": {
-      "grease_filter_reset": { "name": "Azzera filtro grassi" },
-      "charcoal_filter_reset": { "name": "Azzera filtro carbone" }
+      "grease_filter_reset": {
+        "name": "Azzera filtro grassi"
+      },
+      "charcoal_filter_reset": {
+        "name": "Azzera filtro carbone"
+      }
     },
     "light": {
-      "cooktop_light": { "name": "Luce" }
+      "cooktop_light": {
+        "name": "Luce"
+      }
     },
     "sensor": {
-      "grease_filter_efficiency": { "name": "Efficienza filtro grassi" },
-      "grease_filter_status": { "name": "Stato filtro grassi" },
-      "charcoal_filter_efficiency": { "name": "Efficienza filtro carbone" },
-      "charcoal_filter_status": { "name": "Stato filtro carbone" }
+      "grease_filter_efficiency": {
+        "name": "Efficienza filtro grassi"
+      },
+      "grease_filter_status": {
+        "name": "Stato filtro grassi"
+      },
+      "charcoal_filter_efficiency": {
+        "name": "Efficienza filtro carbone"
+      },
+      "charcoal_filter_status": {
+        "name": "Stato filtro carbone"
+      }
     }
   }
 }
