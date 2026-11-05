@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elica Connect",
+        "description": "Inicia sesión con tu cuenta de Elica Connect. La credencial de cliente se obtiene de tu copia de la app: consulta el README.",
+        "data": {
+          "email": "Correo electrónico",
+          "password": "Contraseña",
+          "client_credential": "Credencial de cliente"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Inicia sesión de nuevo",
+        "description": "El inicio de sesión de Elica para {email} ha caducado. Vuelve a introducir la contraseña.",
+        "data": {
+          "password": "Contraseña"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No se ha podido conectar con la nube de Elica.",
+      "invalid_auth": "Correo electrónico, contraseña o credencial de cliente no aceptados.",
+      "no_hoods": "Esta cuenta no tiene campanas."
+    },
+    "abort": {
+      "already_configured": "Esta cuenta ya está configurada.",
+      "reauth_successful": "Inicio de sesión actualizado."
+    }
+  },
+  "entity": {
+    "button": {
+      "grease_filter_reset": { "name": "Restablecer filtro de grasa" },
+      "charcoal_filter_reset": { "name": "Restablecer filtro de carbón" }
+    },
+    "light": {
+      "cooktop_light": { "name": "Luz" }
+    },
+    "sensor": {
+      "grease_filter_efficiency": { "name": "Eficiencia del filtro de grasa" },
+      "grease_filter_status": { "name": "Estado del filtro de grasa" },
+      "charcoal_filter_efficiency": { "name": "Eficiencia del filtro de carbón" },
+      "charcoal_filter_status": { "name": "Estado del filtro de carbón" }
+    }
+  }
+}

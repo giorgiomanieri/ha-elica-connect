@@ -19,6 +19,8 @@ Tutte le funzioni di questa tabella sono state provate su una cappa reale.
 
 Lo stato si aggiorna ogni 30 secondi, quindi un comando dato dal pannello fisico o da Alexa può comparire in HA con un po' di ritardo.
 
+L'interfaccia è disponibile in inglese, italiano, spagnolo, francese e tedesco, secondo la lingua di Home Assistant.
+
 ## Compatibilità
 
 Finora l'integrazione è stata provata su una sola cappa:

@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elica Connect",
+        "description": "Connectez-vous avec votre compte Elica Connect. L'identifiant client provient de votre copie de l'application : consultez le README.",
+        "data": {
+          "email": "E-mail",
+          "password": "Mot de passe",
+          "client_credential": "Identifiant client"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnectez-vous",
+        "description": "La connexion Elica pour {email} a expiré. Saisissez à nouveau le mot de passe.",
+        "data": {
+          "password": "Mot de passe"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de joindre le cloud Elica.",
+      "invalid_auth": "E-mail, mot de passe ou identifiant client non acceptés.",
+      "no_hoods": "Ce compte n'a aucune hotte."
+    },
+    "abort": {
+      "already_configured": "Ce compte est déjà configuré.",
+      "reauth_successful": "Connexion mise à jour."
+    }
+  },
+  "entity": {
+    "button": {
+      "grease_filter_reset": { "name": "Réinitialiser le filtre à graisse" },
+      "charcoal_filter_reset": { "name": "Réinitialiser le filtre à charbon" }
+    },
+    "light": {
+      "cooktop_light": { "name": "Lumière" }
+    },
+    "sensor": {
+      "grease_filter_efficiency": { "name": "Efficacité du filtre à graisse" },
+      "grease_filter_status": { "name": "État du filtre à graisse" },
+      "charcoal_filter_efficiency": { "name": "Efficacité du filtre à charbon" },
+      "charcoal_filter_status": { "name": "État du filtre à charbon" }
+    }
+  }
+}

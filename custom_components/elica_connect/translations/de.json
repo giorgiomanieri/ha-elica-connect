@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elica Connect",
+        "description": "Melde dich mit deinem Elica-Connect-Konto an. Die Client-Anmeldedaten stammen aus deiner Kopie der App: siehe README.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort",
+          "client_credential": "Client-Anmeldedaten"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Erneut anmelden",
+        "description": "Die Elica-Anmeldung für {email} ist abgelaufen. Gib das Passwort erneut ein.",
+        "data": {
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Die Elica-Cloud ist nicht erreichbar.",
+      "invalid_auth": "E-Mail, Passwort oder Client-Anmeldedaten wurden nicht akzeptiert.",
+      "no_hoods": "Dieses Konto hat keine Dunstabzugshauben."
+    },
+    "abort": {
+      "already_configured": "Dieses Konto ist bereits eingerichtet.",
+      "reauth_successful": "Anmeldung aktualisiert."
+    }
+  },
+  "entity": {
+    "button": {
+      "grease_filter_reset": { "name": "Fettfilter zurücksetzen" },
+      "charcoal_filter_reset": { "name": "Kohlefilter zurücksetzen" }
+    },
+    "light": {
+      "cooktop_light": { "name": "Licht" }
+    },
+    "sensor": {
+      "grease_filter_efficiency": { "name": "Fettfilter-Effizienz" },
+      "grease_filter_status": { "name": "Fettfilter-Status" },
+      "charcoal_filter_efficiency": { "name": "Kohlefilter-Effizienz" },
+      "charcoal_filter_status": { "name": "Kohlefilter-Status" }
+    }
+  }
+}

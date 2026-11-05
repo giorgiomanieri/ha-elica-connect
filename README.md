@@ -19,6 +19,8 @@ Every feature in this table has been tested on a real hood.
 
 The state refreshes every 30 seconds, so a command given from the hood panel or through Alexa may appear in Home Assistant with a short delay.
 
+The interface is available in English, Italian, Spanish, French and German, following the Home Assistant language.
+
 ## Compatibility
 
 So far the integration has been tested on a single hood:
